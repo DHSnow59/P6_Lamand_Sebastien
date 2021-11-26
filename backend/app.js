@@ -8,6 +8,7 @@ const app = express();
 const mongoose = require('mongoose');
 // Importation router
 const stuffRoutes = require('./routes/stuff');
+
 // Connection de API a la base de données
 mongoose.connect('mongodb+srv://DHSnow:test@cluster0.ukhtb.mongodb.net/myFirstDatabase?retryWrites=true&w=majority', {
         useNewUrlParser: true,

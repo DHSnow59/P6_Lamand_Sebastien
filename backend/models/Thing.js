@@ -2,11 +2,17 @@ const mongoose = require('mongoose');
 
 //Schema
 const thingSchema = mongoose.Schema({
-    title: { type: String, required: true },
-    description: { type: String, required: true },
-    imageUrl: { type: String, required: true },
     userId: { type: String, required: true },
-    price: { type: Number, required: true },
+    name: { type: String, require: true },
+    manufacturer: { type: String, require: true },
+    description: { type: String, require: true },
+    mainPepper: { type: String, require: true },
+    imageUrl: { type: String, require: true },
+    heat: { type: Number, require: true },
+    likes: { type: Number, require: true },
+    dislikes: { type: Number, require: true },
+    usersLiked: { type: ["String <userId>"], require: true },
+    usersDisliked: { type: ["String <userId>"], require: true },
 });
 
 module.exports = mongoose.model('Thing', thingSchema);
