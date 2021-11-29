@@ -2,18 +2,18 @@ const express = require('express');
 const router = express.Router();
 const stuffCtrl = require('../controllers/stuff');
 //Enregistrement des Things dans la base de données
-router.post('/', stuffCtrl.createThing);
+router.post('/', stuffCtrl.createSauce);
 
 //Mettez à jour un Thing existant
-router.put('/:id', stuffCtrl.modifyThing);
+router.put('/:id', stuffCtrl.modifySauce);
 // Suppression d'un Thing
-router.delete('/:id', stuffCtrl.deleteThing);
+router.delete('/:id', stuffCtrl.deleteSauce);
 
 //Récupération d'un Thing spécifique
-router.get('/:id', stuffCtrl.getOneThing);
+router.get('/:id', stuffCtrl.getOneSauce);
 
-// nous lui passons un string, correspondant à la route pour laquelle nous souhaitons enregistrer cet élément de middleware.
+
 //Récupération de la liste de Things en vente
-router.get('/', stuffCtrl.getAllThing);
+router.get('/', stuffCtrl.getAllSauce);
 
 module.exports = router;
