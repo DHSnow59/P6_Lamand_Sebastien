@@ -8,6 +8,8 @@ const app = express();
 const mongoose = require('mongoose');
 // Importation router
 const stuffRoutes = require('./routes/stuff');
+//Importation de path
+const path = require('path');
 
 // Connection de API a la base de données
 mongoose.connect('mongodb+srv://DHSnow:test@cluster0.ukhtb.mongodb.net/myFirstDatabase?retryWrites=true&w=majority', {
@@ -31,8 +33,10 @@ app.use((req, res, next) => {
     next();
 });
 
+app.use('/images', express.static(path.join(__dirname, 'images')));
+
 //Nous voulons enregistrer notre routeur pour toutes les demandes effectuées vers /api/stuff
-app.use('/api/stuff', stuffRoutes);
+app.use('/api/sauces', stuffRoutes);
 
 // Enregistrement des routes lié a l'authentification
 app.use('/api/auth', userRoutes);

@@ -1,16 +1,19 @@
 const express = require('express');
 const router = express.Router();
 const stuffCtrl = require('../controllers/stuff');
+const auth = require('../middleware/auth');
+const multer = require('../middleware/multer-config');
+
 //Enregistrement des Sauces dans la base de données
-router.post('/', stuffCtrl.createSauce);
+router.post('/', auth, multer, stuffCtrl.createSauce);
 
 //Mettez à jour une sauce existant
-router.put('/:id', stuffCtrl.modifySauce);
+router.put('/:id', auth, stuffCtrl.modifySauce);
 // Suppression d'une sauce
-router.delete('/:id', stuffCtrl.deleteSauce);
+router.delete('/:id', auth, stuffCtrl.deleteSauce);
 //Récupération d'une sauce spécifique
-router.get('/:id', stuffCtrl.getOneSauce);
+router.get('/:id', auth, stuffCtrl.getOneSauce);
 //Récupération de la liste des sauces en vente
-router.get('/', stuffCtrl.getAllSauce);
+router.get('/', auth, stuffCtrl.getAllSauce);
 
 module.exports = router;
