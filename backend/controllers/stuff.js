@@ -1,11 +1,13 @@
 const Sauce = require('../models/Sauce');
 
+// Création d'une nouvelle sauce 
 exports.createSauce = (req, res, next) => {
     const sauceObject = JSON.parse(req.body.sauce);
     delete sauceObject._id;
     const sauce = new Sauce({
         ...sauceObject,
         imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`,
+        // On initialise les likes/dislikes et les tableaux likes/dislikes a 0  
         likes: 0,
         dislikes: 0,
         usersLiked: [],
@@ -16,12 +18,14 @@ exports.createSauce = (req, res, next) => {
         .catch(error => res.status(400).json({ error }));
 };
 
+// Modification d'une sauce
 exports.modifySauce = (req, res, next) => {
     Sauce.updateOne({ _id: req.params.id }, {...req.body, _id: req.params.id })
         .then(() => res.status(200).json({ message: 'Objet modifié !' }))
         .catch(error => res.status(400).json({ error }));
 };
 
+//Suppression d'une sauce
 exports.deleteSauce = (req, res, next) => {
     Sauce.findOne({ _id: req.params.id }).then(
         (sauce) => {
@@ -64,8 +68,10 @@ exports.getAllSauce = (req, res, next) => {
         .catch(error => res.status(400).json({ error }));
 };
 
+// Ajout d'un like ou dislike a la sauce
 exports.likeAndDislike = (req, res, next) => {
     const like = req.body.like;
+    // Ajout d'un like a la sauce
     if (like === 1) {
         Sauce.findOne({ _id: req.params.id })
             .then((sauce) => {
@@ -77,18 +83,41 @@ exports.likeAndDislike = (req, res, next) => {
                     .catch((error) => res.status(400).json({ error }));
             })
             .catch((error) => res.status(500).json({ error }));
+        // Ajout d'un  dislike a la sauce
     } else if (like === -1) {
         Sauce.findOne({ _id: req.params.id })
             .then((sauce) => {
-                let dislike = sauce;
-                dislike.dislikes++;
+                let dislike = sauce; // On crée un clone de l'objet sauce 
+                dislike.dislikes++; // On ajoute un like à l'objet 
                 dislike.usersDisliked.push(req.body.userId);
                 Sauce.updateOne({ _id: req.params.id }, { dislikes: dislike.dislikes, usersDisliked: dislike.usersDisliked, _id: req.params.id })
                     .then(() => res.status(200).json({ message: "Tu dislike ce produit !" }))
                     .catch((error) => res.status(400).json({ error }));
-
             })
+            .catch((error) => res.status(500).json({ error }));
     } else if (like === 0) {
-
+        Sauce.findOne({ _id: req.params.id })
+            .then((sauce) => {
+                // On utilise includes pour trouver si l'utilisateur ce trouve usersLiked ou usersDisliked
+                if (sauce.usersLiked.includes(req.body.userId)) {
+                    let unlike = sauce; // On crée un clone de l'objet sauce 
+                    unlike.likes--; // On enlève un like à l'objet 
+                    const index = unlike.usersLiked.indexOf(req.body.userId); // On utilise indexOf pour trouver la position de l'utilisateur dans le [] 
+                    unlike.usersLiked.splice(index, 1); // On utilise l'index pour supprimer l'utilisateur du [] grace a la méthode slice
+                    Sauce.updateOne({ _id: req.params.id }, { likes: unlike.likes, usersLiked: unlike.usersLiked }) // On update la sauce grace au clone que nous avons édité 
+                        .then(() => res.status(200).json({ message: "Tu as enlevé ton like de ce produit !" }))
+                        .catch((error) => res.status(400).json({ error }));
+                    // On utilise includes pour trouver si l'utilisateur ce trouve usersLiked ou usersDisliked
+                } else if (sauce.usersDisliked.includes(req.body.userId)) {
+                    let unDislike = sauce;
+                    unDislike.dislikes--;
+                    const index = unDislike.usersDisliked.indexOf(req.body.userId);
+                    unDislike.usersDisliked.splice(index, 1);
+                    Sauce.updateOne({ _id: req.params.id }, { dislikes: unDislike.dislikes, usersDisliked: unDislike.usersDisliked })
+                        .then(() => res.status(200).json({ message: "Tu as enlevé ton Dislike de ce produit !" }))
+                        .catch((error) => res.status(400).json({ error }));
+                }
+            })
+            .catch((error) => res.status(500).json({ error }));
     }
 };
