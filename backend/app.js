@@ -10,6 +10,16 @@ const mongoose = require('mongoose');
 const stuffRoutes = require('./routes/stuff');
 //Importation de path
 const path = require('path');
+//Importation de la sécurité helmet
+const helmet = require("helmet");
+// Importation de la sécurité express-rate-limit
+const rateLimit = require("express-rate-limit");
+
+const limiteur = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes 
+    max: 100, // limite chaque IP à 100 requêtes par windowMs
+    message: "Vous avez effectué plus de 100 requétes dans une limite de 24 heures!"
+});
 
 // Connection de API a la base de données
 mongoose.connect('mongodb+srv://DHSnow:test@cluster0.ukhtb.mongodb.net/myFirstDatabase?retryWrites=true&w=majority', {
@@ -41,7 +51,11 @@ app.use('/api/sauces', stuffRoutes);
 // Enregistrement des routes lié a l'authentification
 app.use('/api/auth', userRoutes);
 
+//Ajout de sécurité à un serveur Express
+app.use(helmet());
 
+// applique un limitateur de nombre de requêtes envoyées vers un serveur Express.
+app.use(limiteur);
 
 
 //Exportation de l'application pour y accéder depuis les autres fichiers
