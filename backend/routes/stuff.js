@@ -11,7 +11,7 @@ router.post('/', auth, multer, stuffCtrl.createSauce);
 router.post('/:id/like', auth, stuffCtrl.likeAndDislike);
 
 //Mettez à jour une sauce existant
-router.put('/:id', auth, stuffCtrl.modifySauce);
+router.put('/:id', auth, multer, stuffCtrl.modifySauce);
 // Suppression d'une sauce
 router.delete('/:id', auth, stuffCtrl.deleteSauce);
 //Récupération d'une sauce spécifique
